@@ -1,0 +1,23 @@
+name: release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+
+    env:
+      ENV: prod
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Shim
+      run: make prepareci
+
+    - name: Publish
+      run: make publish

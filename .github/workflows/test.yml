@@ -1,0 +1,22 @@
+name: test
+
+on:
+  pull_request:
+
+jobs:
+  test:
+
+    env:
+      ENV: prod
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Shim
+      run: make prepareci
+
+    - name: Sanity Check vsce cli
+      run: make vsce_sanity

@@ -1,0 +1,1897 @@
+{
+ "IAbilityDef": {
+  "modKeyword": "ability",
+  "properties": {
+   "assault": {
+    "$ref": "#/definitions/IAssaultAbility"
+   },
+   "create": {
+    "$ref": "#/definitions/ICreateAbility"
+   },
+   "on": {
+    "anyOf": [
+     {
+      "$ref": "#/definitions/IUserInjectedMod"
+     },
+     {
+      "items": {
+       "$ref": "#/definitions/IUserInjectedMod"
+      },
+      "type": "array"
+     }
+    ]
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword ability\n * Various actions that are extended to the parent entity.\n * Usually attached to a ship, and grants that ship extra actions.\n * Informs the behaviours within solvers.\n*/\ninterface IAbilityDef {\n  create?: ICreateAbility\n  assault?: IAssaultAbility\n  on?: IUserInjectedMod | IUserInjectedMod[]\n}"
+ },
+ "IAddEffectParams": {
+  "modKeyword": "addEffect",
+  "properties": {
+   "effect": {
+    "$ref": "#/definitions/Partial<IEffectState>"
+   },
+   "effectName": {
+    "$ref": "#/definitions/TEffectName"
+   },
+   "to": {
+    "$ref": "#/definitions/IEntityState"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword addEffect\n * Each effect may have varying parameters,\n * but most typically honor `intensity`\n * consistently as a number value signifying \"more\"\n * of the effect in queston.\n * \n * A guide will likely need to be published for the baseline \n * effects and events so that modders are aware of the various\n * ways they are used.\n*/\ninterface IAddEffectParams {\n  to: IEntityState\n  effectName: TEffectName\n  effect: Partial<IEffectState>\n}"
+ },
+ "IAoeEvent": {
+  "modKeyword": "aoeEvent",
+  "properties": {
+   "attackAngleMask": {
+    "type": "number"
+   },
+   "attacker": {
+    "$ref": "#/definitions/IMacroEntityState"
+   },
+   "damageType": {
+    "$ref": "#/definitions/TDamageType"
+   },
+   "defender": {
+    "$ref": "#/definitions/IMacroEntityState"
+   },
+   "distance": {
+    "type": "number"
+   },
+   "entityId": {
+    "type": "string"
+   },
+   "eventId": {
+    "type": "number"
+   },
+   "hitAngleMask": {
+    "type": "number"
+   },
+   "hitId": {
+    "type": "string"
+   },
+   "intensity": {
+    "type": "number"
+   },
+   "isHotshot": {
+    "type": "boolean"
+   },
+   "ordnanceId": {
+    "type": "string"
+   },
+   "touchCount": {
+    "type": "number"
+   },
+   "type": {
+    "$ref": "#/definitions/TEventName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword aoeEvent\n * An aoe event has two collision checks which determine if\n * anyone in the blast is susceptible to more damage via `isHotshot`\n * flag. The inner ring of the blast can optionally do more things.\n*/\ninterface IAoeEvent extends IEvent { \n  hitId: string\n  ordnanceId: TDefId\n  attacker: IMacroEntityState\n  intensity: number\n  isHotshot: boolean\n  distance: number\n  damageType: TDamageType"
+ },
+ "IAoeMissEvent": {
+  "modKeyword": "missEvent",
+  "properties": {
+   "defender": {
+    "type": "null"
+   },
+   "entityId": {
+    "type": "string"
+   },
+   "eventId": {
+    "type": "number"
+   },
+   "ordnanceId": {
+    "type": "string"
+   },
+   "touchCount": {
+    "type": "number"
+   },
+   "type": {
+    "$ref": "#/definitions/TEventName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword missEvent\n * An explosion wouldn't exactly \"miss\" explicitly\n * in a pure physics engine. Since we have a notion of\n * `evasion` via `speed` dice rolls, we therefore also\n * have to register a collision with the explosion, yet\n * flagged as safe.\n*/\ninterface IAoeMissEvent extends IEvent {\n  ordnanceId: TDefId\n  defender: null\n}"
+ },
+ "IAssaultAbility": {
+  "modKeyword": "assault",
+  "properties": {
+   "ammo": {
+    "type": "number"
+   },
+   "power": {
+    "type": "number"
+   },
+   "range": {
+    "properties": {
+     "max": {
+      "type": "number"
+     },
+     "min": {
+      "type": "number"
+     }
+    },
+    "type": "object"
+   },
+   "solver": {
+    "$ref": "#/definitions/TSolverAlgorithmName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword assault\n * Alters specific physics solver algorithm\n * for an attack action.\n*/\ninterface IAssaultAbility {\n  solver: TSolverAlgorithmName\n  power: number\n  ammo: number\n  range: {\n    min: number\n    max: number\n  }\n}"
+ },
+ "IBallisticEvent": {
+  "modKeyword": "ballisticEvent",
+  "properties": {
+   "attackAngleMask": {
+    "type": "number"
+   },
+   "attacker": {
+    "$ref": "#/definitions/IMacroEntityState"
+   },
+   "collateral": {
+    "items": {
+     "$ref": "#/definitions/IBallisticCollateralHit"
+    },
+    "type": "array"
+   },
+   "damageType": {
+    "$ref": "#/definitions/TDamageType"
+   },
+   "defender": {
+    "$ref": "#/definitions/IMacroEntityState"
+   },
+   "distance": {
+    "type": "number"
+   },
+   "entityId": {
+    "type": "string"
+   },
+   "evades": {
+    "items": {
+     "$ref": "#/definitions/TDiceDigit"
+    },
+    "type": "array"
+   },
+   "eventId": {
+    "type": "number"
+   },
+   "hitAngleMask": {
+    "type": "number"
+   },
+   "hitId": {
+    "type": "string"
+   },
+   "ordnanceId": {
+    "type": "string"
+   },
+   "stacks": {
+    "items": {
+     "type": "number"
+    },
+    "type": "array"
+   },
+   "touchCount": {
+    "type": "number"
+   },
+   "type": {
+    "$ref": "#/definitions/TEventName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword ballisticEvent\n * Is effectively the same as `ILaserEvent`,\n * but is designed to NOT pierce through.\n * It will only hit one target after all evades\n * ricochet, skilled shots are calculated.\n*/\ninterface IBallisticEvent extends IEvent {\n  hitId: string\n  ordnanceId: TDefId\n  distance: number\n  damageType: TDamageType\n  attacker: IMacroEntityState\n  defender: IMacroEntityState\n  stacks: TAngleMask[]\n  evades: TDiceDigit[]\n  collateral: IBallisticCollateralHit[]\n  hitAngleMask: TAngleMask\n  attackAngleMask: TAngleMask\n}"
+ },
+ "ICollideEntityEvent": {
+  "modKeyword": "collisionEvent",
+  "properties": {
+   "angleMask": {
+    "type": "number"
+   },
+   "atWaypoint": {
+    "type": "number"
+   },
+   "entityId": {
+    "type": "string"
+   },
+   "eventId": {
+    "type": "number"
+   },
+   "intensity": {
+    "type": "number"
+   },
+   "moveSpeed": {
+    "$ref": "#/definitions/TSpeed"
+   },
+   "touchCount": {
+    "type": "number"
+   },
+   "type": {
+    "$ref": "#/definitions/TEventName"
+   },
+   "with": {
+    "type": "string"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword collisionEvent\n * Units that try to occupy the same phyical space produce this event.\n * intensity is a general calculation of how hard the impact is.\n * Intensity isn't well defined unit, but generally can be trusted that the ship hit\n * something at a certain speed and of a certain mass.\n * Smaller ships are at a disadvantage during collisions since they have less mass\n * and are more likely to encounter higher intensities.\n*/\ninterface ICollideEntityEvent extends IEvent { \n  with: TEntityId\n  atWaypoint: number\n  angleMask: TAngleMask\n  intensity: number\n  moveSpeed: TSpeed\n}"
+ },
+ "ICreateAbility": {
+  "modKeyword": "create",
+  "properties": {
+   "angle": {
+    "type": "number"
+   },
+   "fuel": {
+    "type": "number"
+   },
+   "trajectory": {
+    "description": "a concatenation of the full maneuver's properties",
+    "type": "string"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword create\n * Describes how an auxOrdnance will bahave after it is spawned.\n*/\ninterface ICreateAbility {\n  angle: TAngleMask\n  fuel: number\n  trajectory: TManeuverName\n}"
+ },
+ "IDeployEntityEvent": {
+  "modKeyword": "deployEvent",
+  "properties": {
+   "entityId": {
+    "type": "string"
+   },
+   "eventId": {
+    "type": "number"
+   },
+   "position": {
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 3,
+    "minItems": 3,
+    "type": "array"
+   },
+   "rotation": {
+    "description": "a euler angle _(0 - 360)_ representing a facing angle.",
+    "type": "number"
+   },
+   "touchCount": {
+    "type": "number"
+   },
+   "type": {
+    "$ref": "#/definitions/TEventName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword deployEvent\n * This is a unit spawn or instantiation.\n * The map is 2d on the server.\n*/\ninterface IDeployEntityEvent extends IEvent {\n  position: TVector3\n  rotation: TEulerRotation\n}"
+ },
+ "IEffectState": {
+  "additionalProperties": {
+   "type": [
+    "string",
+    "number"
+   ]
+  },
+  "modKeyword": "effect",
+  "properties": {
+   "cause": {
+    "type": "string"
+   },
+   "decision": {
+    "description": "The true turn number under the hood.",
+    "type": "number"
+   },
+   "decisionExpiration": {
+    "description": "The true turn number under the hood.",
+    "type": "number"
+   },
+   "eventId": {
+    "type": "number"
+   },
+   "id": {
+    "type": "string"
+   },
+   "intensity": {
+    "type": "number"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword effect\n * These are not super well defined yet,\n * and are meant to be a flexible shared parameter space.\n * The parameters are used by a rule \n * and can have different meanings depending on the implementation.\n */\ninterface IEffectState {\n  id?: string\n  eventId: number\n  intensity: number\n  cause?: string\n  decision: TDecisionIndex\n  decisionExpiration: TDecisionIndex\n  [concept: string]: string | number | undefined\n}"
+ },
+ "IEntityConstants": {
+  "additionalProperties": {
+   "$ref": "#/definitions/Partial<IModFile>"
+  },
+  "modKeyword": "consts",
+  "properties": {
+   "DAMAGE": {
+    "$ref": "#/definitions/IModDamageConsts"
+   },
+   "DICE": {
+    "$ref": "#/definitions/IModDiceConsts"
+   },
+   "RARE_CRIT": {
+    "$ref": "#/definitions/IModRareCritConsts"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword consts\n * Isolated modable keys which make sense to mod.\n * Comes from {@link IModConstants},\n * but can these can be extended as well to have new keys.\n */\ninterface IEntityConstants {\n  DAMAGE: IModDamageConsts\n  DICE: IModDiceConsts\n  RARE_CRIT: IModRareCritConsts\n  [category: string]: Partial<IModFile>\n}"
+ },
+ "IEntityState": {
+  "modKeyword": "subject",
+  "properties": {
+   "addPendingEffect": {
+    "type": "object"
+   },
+   "affix": {
+    "items": {
+     "description": "A single attachment/upgrade/affixed component.",
+     "items": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number"
+      },
+      {
+       "type": "number"
+      }
+     ],
+     "maxItems": 3,
+     "minItems": 3,
+     "type": "array"
+    },
+    "type": "array"
+   },
+   "alterPendingEffect": {
+    "type": "object"
+   },
+   "consts": {
+    "$ref": "#/definitions/IEntityConstants"
+   },
+   "def": {
+    "$ref": "#/definitions/IEntityDef"
+   },
+   "defId": {
+    "type": "string"
+   },
+   "dimensions": {
+    "description": "a vector2 consisting of x and y coordinates respectively.",
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 2,
+    "minItems": 2,
+    "type": "array"
+   },
+   "effectIntensity": {
+    "type": "object"
+   },
+   "entityId": {
+    "type": "string"
+   },
+   "getEffects": {
+    "type": "object"
+   },
+   "getTrait": {
+    "type": "object"
+   },
+   "hasEffect": {
+    "type": "object"
+   },
+   "hasEffects": {
+    "type": "object"
+   },
+   "hasTrait": {
+    "type": "object"
+   },
+   "index": {
+    "type": "number"
+   },
+   "intent": {
+    "$ref": "#/definitions/TIntentName"
+   },
+   "isTouchingPoint": {
+    "type": "object"
+   },
+   "mutateStats": {
+    "type": "object"
+   },
+   "nextPendingEffect": {
+    "type": "object"
+   },
+   "owner": {
+    "$ref": "#/definitions/TOwnerId"
+   },
+   "popPendingEffects": {
+    "type": "object"
+   },
+   "position": {
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 3,
+    "minItems": 3,
+    "type": "array"
+   },
+   "removePendingEffect": {
+    "type": "object"
+   },
+   "report": {
+    "$ref": "#/definitions/IPreviousMutationReport"
+   },
+   "resolve": {
+    "type": "object"
+   },
+   "rotation": {
+    "description": "a euler angle _(0 - 360)_ representing a facing angle.",
+    "type": "number"
+   },
+   "setDefinition": {
+    "type": "object"
+   },
+   "setIntent": {
+    "type": "object"
+   },
+   "setPosition": {
+    "type": "object"
+   },
+   "setReportEntry": {
+    "type": "object"
+   },
+   "setRotation": {
+    "type": "object"
+   },
+   "size": {
+    "$ref": "#/definitions/TSizeName"
+   },
+   "slot": {
+    "$ref": "#/definitions/TSlotName"
+   },
+   "stats": {
+    "$ref": "#/definitions/IBaseStats"
+   },
+   "type": {
+    "$ref": "#/definitions/TEntityTypeName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword subject\n * Base class for all game objects with state tracking needs.\n * It was imagined that there would be\n * ships, projectiles, obstacles, and people that need be managed.\n * Ideally all of those entities would have reactions\n * to the same effects, even if they reacted differently.\n * This base entity is meant to encapsulate\n * the most common functionality shared between all entities.\n */\ninterface IEntityState {\n  def: IEntityDef\n  defId: TDefId\n  entityId: TEntityId\n  type: TEntityTypeName\n  slot: TSlotName\n  index: number\n  owner: TOwnerId\n  size: TSizeName\n  dimensions: TVector2\n  intent: TIntentName\n  position: TVector3\n  rotation: TEulerRotation\n  stats: IBaseStats\n  affix: TAffix[]\n  report: IPreviousMutationReport\n  consts: IEntityConstants\n  isTouchingPoint: (point: TVector2) => boolean\n  hasTrait: (trait: TTraitName, specificValue?: string) => boolean\n  getTrait: (trait: TTraitName) => string\n  hasEffect: (effectName: TEffectName, truthyPropertyName?: string) => boolean\n  hasEffects: (effect: TEffectName, filterBy: TEffectFilter) => boolean\n  getEffects: (effectName: TEffectName, filterBy?: TEffectFilter, limit?: number) => IEffectState[]\n  setDefinition: (def: IEntityDef) => void\n  setIntent: (intent?: TIntentName) => void\n  setPosition: (newPos: TVector3) => void\n  setRotation: (newRot: TEulerRotation) => void\n  setReportEntry: <T>(name: string, value: T) => void\n  mutateStats: <T>(statName: TNumericStatName, modifyBy: number) => T\n  addPendingEffect: (effectName: TEffectName, effectSettings) => number\n  nextPendingEffect: (effectName, removalCheck: TEffectFilter) => IEffectState | undefined\n  popPendingEffects: (effectName: TEffectName, filterBy?: TEffectFilter, limit?: number) => IEffectState[]\n  removePendingEffect: (effectName: TEffectName, filter: TEffectFilter, limit?: number) => number\n  alterPendingEffect: (effectName: TEffectName, mapFunc: TEffectStateAlteration, filter?: TEffectFilter, limit?: number) => number\n  effectIntensity: (effectName: TEffectName, filterBy?: TEffectFilter) => number\n  resolve: <T>() => T\n}"
+ },
+ "IEvent": {
+  "additionalProperties": {},
+  "modKeyword": "event",
+  "properties": {
+   "entityId": {
+    "type": "string"
+   },
+   "eventId": {
+    "type": "number"
+   },
+   "touchCount": {
+    "type": "number"
+   },
+   "type": {
+    "$ref": "#/definitions/TEventName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword event\n * This is the baseline building block used to create visible effects,\n * moving the progression of the battle forward.\n * There are several kinds of events depending on the solver,\n * and those events are passed through any number of rules\n * which finally create effects.\n * \n * A diagram and article was created to better illustrate how this happens.\n * https://steelpinion.com/steel-saturday/article-10\n*/\ninterface IEvent {\n  eventId: TEventId\n  entityId: TEntityId\n  type: TEventName\n  touchCount?: number\n  [eventProp: string]: unknown\n}"
+ },
+ "IExpectOneOfCollection": {
+  "additionalProperties": {
+   "items": {
+    "type": "string"
+   },
+   "type": "array"
+  },
+  "modKeyword": "required",
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword required\n * A list of traits with corresponding acceptable values for those traits which allow this component to be attached legally.\n*/\ninterface IExpectOneOfCollection {\n  [traitName: TTraitName]: string[]\n}"
+ },
+ "IFanstackMissEvent": {
+  "modKeyword": "missEvent\nSimilarly to the `IAoeMissEvent`, a fanstack collision\nmay be registered, yet the victim may have \"dodged\"\nso that the impact is reduced or removed entirely\ndepending on the rules specified in the match and mods.",
+  "properties": {
+   "entityId": {
+    "type": "string"
+   },
+   "eventId": {
+    "type": "number"
+   },
+   "ordnanceId": {
+    "type": "string"
+   },
+   "touchCount": {
+    "type": "number"
+   },
+   "type": {
+    "$ref": "#/definitions/TEventName"
+   }
+  },
+  "type": "object"
+ },
+ "ILaserBeginEvent": {
+  "modKeyword": "missEvent",
+  "properties": {
+   "attackAngleMask": {
+    "type": "number"
+   },
+   "defender": {
+    "type": "null"
+   },
+   "entityId": {
+    "type": "string"
+   },
+   "eventId": {
+    "type": "number"
+   },
+   "ordnanceId": {
+    "type": "string"
+   },
+   "touchCount": {
+    "type": "number"
+   },
+   "type": {
+    "$ref": "#/definitions/TEventName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword missEvent\n * Laser's are only aimed with an angle.\n * Any damage or \"hits\" are side effects.\n * I think because of this, the default is that\n * laser fires are considered the same as a missEvent structurally.\n * Though there is a corresponding \n * LaserEvent on a detected beam collision.\n*/\ninterface ILaserBeginEvent extends IEvent {\n  ordnanceId: TDefId\n  defender: null // why did i do this?\n  attackAngleMask: TAngleMask\n}"
+ },
+ "IMacroEntityState": {
+  "modKeyword": "subject",
+  "properties": {
+   "aboard": {
+    "items": {
+     "$ref": "#/definitions/IPersonState"
+    },
+    "type": "array"
+   },
+   "addPendingEffect": {
+    "type": "object"
+   },
+   "addPersons": {
+    "type": "object"
+   },
+   "affix": {
+    "items": {
+     "description": "A single attachment/upgrade/affixed component.",
+     "items": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number"
+      },
+      {
+       "type": "number"
+      }
+     ],
+     "maxItems": 3,
+     "minItems": 3,
+     "type": "array"
+    },
+    "type": "array"
+   },
+   "alterPendingEffect": {
+    "type": "object"
+   },
+   "alterPersons": {
+    "type": "object"
+   },
+   "assaultDicePool": {
+    "items": {
+     "$ref": "#/definitions/TDiceName"
+    },
+    "type": "array"
+   },
+   "consts": {
+    "$ref": "#/definitions/IEntityConstants"
+   },
+   "def": {
+    "$ref": "#/definitions/IEntityDef"
+   },
+   "defId": {
+    "type": "string"
+   },
+   "dimensions": {
+    "description": "a vector2 consisting of x and y coordinates respectively.",
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 2,
+    "minItems": 2,
+    "type": "array"
+   },
+   "effectIntensity": {
+    "type": "object"
+   },
+   "entityId": {
+    "type": "string"
+   },
+   "evadeDicePool": {
+    "items": {
+     "$ref": "#/definitions/TDiceName"
+    },
+    "type": "array"
+   },
+   "getEffects": {
+    "type": "object"
+   },
+   "getManeuverDifficulty": {
+    "type": "object"
+   },
+   "getPersons": {
+    "type": "object"
+   },
+   "getTrait": {
+    "type": "object"
+   },
+   "gunnerRank": {
+    "type": "number"
+   },
+   "hasArmorAngle": {
+    "type": "object"
+   },
+   "hasEffect": {
+    "type": "object"
+   },
+   "hasEffects": {
+    "type": "object"
+   },
+   "hasTrait": {
+    "type": "object"
+   },
+   "hitArmorAngle": {
+    "type": "object"
+   },
+   "index": {
+    "type": "number"
+   },
+   "intent": {
+    "$ref": "#/definitions/TIntentName"
+   },
+   "isTouchingPoint": {
+    "type": "object"
+   },
+   "layout": {
+    "$ref": "#/definitions/ILayoutBlueprint"
+   },
+   "mutateStats": {
+    "type": "object"
+   },
+   "nextPendingEffect": {
+    "type": "object"
+   },
+   "owner": {
+    "$ref": "#/definitions/TOwnerId"
+   },
+   "popPendingEffects": {
+    "type": "object"
+   },
+   "position": {
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 3,
+    "minItems": 3,
+    "type": "array"
+   },
+   "reduceDamageWithArmor": {
+    "type": "object"
+   },
+   "removePendingEffect": {
+    "type": "object"
+   },
+   "report": {
+    "$ref": "#/definitions/IPreviousMutationReport"
+   },
+   "resolve": {
+    "type": "object"
+   },
+   "rotation": {
+    "description": "a euler angle _(0 - 360)_ representing a facing angle.",
+    "type": "number"
+   },
+   "setDefinition": {
+    "type": "object"
+   },
+   "setIntent": {
+    "type": "object"
+   },
+   "setPosition": {
+    "type": "object"
+   },
+   "setReportEntry": {
+    "type": "object"
+   },
+   "setRotation": {
+    "type": "object"
+   },
+   "size": {
+    "$ref": "#/definitions/TSizeName"
+   },
+   "slot": {
+    "$ref": "#/definitions/TSlotName"
+   },
+   "stats": {
+    "$ref": "#/definitions/IMacroEntityStats"
+   },
+   "tryCollateralBypass": {
+    "type": "object"
+   },
+   "type": {
+    "$ref": "#/definitions/TEntityTypeName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword subject\n * Large entity are {@link IObstacleState} and {@link IShipState}.\n*/\ninterface IMacroEntityState extends IEntityState {\n  stats: IMacroEntityStats\n  gunnerRank: number\n  aboard: IPersonState[]\n  layout: ILayoutBlueprint\n  evadeDicePool: TDiceName[]\n  assaultDicePool: TDiceName[]\n  hasArmorAngle: (angleMask: TAngleMask) => boolean\n  getPersons: (filter?: TPersonFilter) => IPersonState[]\n  hitArmorAngle: (angleMask: TAngleMask) => boolean\n  reduceDamageWithArmor: (incomingDamage: number, angleMask: TAngleMask) => number\n  addPersons: (personStates: IPersonState[]) => void\n  alterPersons: (filter: TPersonFilter, alteration: TPersonAlteration) => IPersonState[]\n  /* has side effects which allows up to 4 bypasses per engine step - will return true up to 4 times */\n  tryCollateralBypass: () => boolean\n  getManeuverDifficulty: (maneuverName: TManeuverName) => TManeuverDifficulty\n}"
+ },
+ "IMacroEntityStats": {
+  "modKeyword": "stats",
+  "properties": {
+   "ammo": {
+    "type": "number"
+   },
+   "armor": {
+    "description": "Hit resistance configuration.",
+    "items": {
+     "items": [
+      {
+       "items": {
+        "type": "number"
+       },
+       "type": "array"
+      },
+      {
+       "type": "number"
+      }
+     ],
+     "maxItems": 2,
+     "minItems": 2,
+     "type": "array"
+    },
+    "type": "array"
+   },
+   "cost": {
+    "type": "number"
+   },
+   "endurance": {
+    "type": "number"
+   },
+   "fuel": {
+    "type": "number"
+   },
+   "hull": {
+    "description": "Number of hits before this ship sinks.",
+    "type": "number"
+   },
+   "power": {
+    "description": "The base number of dice to roll when attacking.",
+    "type": "number"
+   },
+   "pressure": {
+    "description": "More pressure reduces special benefits the ship/crew may have.",
+    "type": "number"
+   },
+   "rank": {
+    "$ref": "#/definitions/TPersonalRank"
+   },
+   "speed": {
+    "description": "The base number of dice to roll when evading.",
+    "type": "number"
+   },
+   "taunt": {
+    "type": "number"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword stats\n * Typically a reference to quality of \"big\" entity like ship or obstacle.\n * Some concepts may not make sense like speed for a building.\n * Although every macro entity uses `hull` to represent hitpoints (HP).\n*/\ninterface IMacroEntityStats extends IBaseStats {\n  power: number\n  speed: number\n  hull?: number\n  armor: TArmorLayer[]\n}"
+ },
+ "IModConstants": {
+  "additionalProperties": {
+   "$ref": "#/definitions/Partial<IModFile>"
+  },
+  "modKeyword": "consts",
+  "properties": {
+   "BRAWL": {
+    "$ref": "#/definitions/IModBrawlConsts"
+   },
+   "DAMAGE": {
+    "$ref": "#/definitions/IModDamageConsts"
+   },
+   "DECK_PLAN": {
+    "$ref": "#/definitions/IModDeckPlanConsts"
+   },
+   "DICE": {
+    "$ref": "#/definitions/IModDiceConsts"
+   },
+   "EFFECT": {
+    "$ref": "#/definitions/IModEffectConsts"
+   },
+   "ENTITY": {
+    "$ref": "#/definitions/IModEntityConsts"
+   },
+   "KEYWORD": {
+    "$ref": "#/definitions/IModKeywordConsts"
+   },
+   "PHASE": {
+    "$ref": "#/definitions/IModPhaseConsts"
+   },
+   "RARE_CRIT": {
+    "$ref": "#/definitions/IModRareCritConsts"
+   },
+   "SIZE": {
+    "$ref": "#/definitions/TModSizeConsts"
+   },
+   "SOLVER": {
+    "$ref": "#/definitions/IModSolverConsts"
+   },
+   "SPEED": {
+    "$ref": "#/definitions/IModSpeedConsts"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword consts\n * Specific TDefIds that are used to drive varying downstream rules.\n */\ninterface IModConstants {\n  [category: string]: Partial<IModFile>\n  BRAWL: IModBrawlConsts\n  DAMAGE: IModDamageConsts\n  DECK_PLAN: IModDeckPlanConsts\n  DICE: IModDiceConsts\n  EFFECT: IModEffectConsts\n  ENTITY: IModEntityConsts\n  KEYWORD: IModKeywordConsts\n  PHASE: IModPhaseConsts\n  RARE_CRIT: IModRareCritConsts\n  SIZE: TModSizeConsts\n  SOLVER: IModSolverConsts\n  SPEED: IModSpeedConsts\n}"
+ },
+ "IModLogicGlobalScope": {
+  "modKeyword": "then",
+  "properties": {
+   "addEvent": {
+    "modKeyword": "addEvent",
+    "type": "object"
+   },
+   "attacker": {
+    "$ref": "#/definitions/IShipState"
+   },
+   "defender": {
+    "$ref": "#/definitions/IShipState"
+   },
+   "event": {
+    "$ref": "#/definitions/IEvent"
+   },
+   "iRandom": {
+    "$ref": "#/definitions/IRandomHelper"
+   },
+   "other": {
+    "$ref": "#/definitions/IEntityState"
+   },
+   "subject": {
+    "$ref": "#/definitions/IEntityState"
+   },
+   "world": {
+    "$ref": "#/definitions/IWorldState"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword then\n * Similar to the {@link IModMinimalGlobalScope}\n * as seen in the `when` condition checks,\n * except that additonal context is set for\n * modder convienience.\n*/\ninterface IModLogicGlobalScope extends IModMinimalGlobalScope {\n  world: IWorldState\n  addEvent: TAddEventFunc\n}"
+ },
+ "IModMinimalGlobalScope": {
+  "modKeyword": "when",
+  "properties": {
+   "attacker": {
+    "$ref": "#/definitions/IShipState"
+   },
+   "defender": {
+    "$ref": "#/definitions/IShipState"
+   },
+   "event": {
+    "$ref": "#/definitions/IEvent"
+   },
+   "iRandom": {
+    "$ref": "#/definitions/IRandomHelper"
+   },
+   "other": {
+    "$ref": "#/definitions/IEntityState"
+   },
+   "subject": {
+    "$ref": "#/definitions/IEntityState"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword when\n * A minimal set of context for the varying kinds of\n * subjects which may be involved for proc'ed events.\n*/\ninterface IModMinimalGlobalScope {\n  event: IEvent\n  subject: IEntityState\n  attacker: IShipState\n  defender: IShipState\n  other: IEntityState\n  iRandom: IRandomHelper\n}"
+ },
+ "IModSpeedConsts": {
+  "modKeyword": "SPEED",
+  "properties": {
+   "FAST": {
+    "const": 4,
+    "type": "number"
+   },
+   "FASTEST": {
+    "const": 5,
+    "type": "number"
+   },
+   "SLOW": {
+    "const": 2,
+    "type": "number"
+   },
+   "SLOWEST": {
+    "const": 1,
+    "type": "number"
+   },
+   "STEADY": {
+    "const": 3,
+    "type": "number"
+   },
+   "id": {
+    "type": "string"
+   },
+   "name": {
+    "type": "string"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword SPEED\n * Human readable version of TSpeed.\n*/\ninterface IModSpeedConsts extends IModFile {\n  'SLOWEST': 1\n  'SLOW': 2\n  'STEADY': 3\n  'FAST': 4\n  'FASTEST': 5\n}"
+ },
+ "IMoveEntityEvent": {
+  "modKeyword": "moveEvent",
+  "properties": {
+   "entityId": {
+    "type": "string"
+   },
+   "eventId": {
+    "type": "number"
+   },
+   "maneuverName": {
+    "description": "a concatenation of the full maneuver's properties",
+    "type": "string"
+   },
+   "moveDirection": {
+    "$ref": "#/definitions/TDirectionName"
+   },
+   "moveId": {
+    "description": "the base curve algorithm name without speed nor direction",
+    "type": "string"
+   },
+   "moveSpeed": {
+    "$ref": "#/definitions/TSpeed"
+   },
+   "position": {
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 3,
+    "minItems": 3,
+    "type": "array"
+   },
+   "rotation": {
+    "description": "a euler angle _(0 - 360)_ representing a facing angle.",
+    "type": "number"
+   },
+   "touchCount": {
+    "type": "number"
+   },
+   "type": {
+    "$ref": "#/definitions/TEventName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword moveEvent\n * A specific kind of event from the physics solver\n * regarding how entities are being moved around.\n*/\ninterface IMoveEntityEvent extends IEvent {\n  position: TVector3\n  rotation: TEulerRotation\n  moveId: TMoveId\n  maneuverName: TManeuverName\n  moveDirection: TDirectionName\n  moveSpeed: TSpeed\n}"
+ },
+ "IObstacleState": {
+  "modKeyword": "obstacle",
+  "properties": {
+   "aboard": {
+    "items": {
+     "$ref": "#/definitions/IPersonState"
+    },
+    "type": "array"
+   },
+   "addPendingEffect": {
+    "type": "object"
+   },
+   "addPersons": {
+    "type": "object"
+   },
+   "affix": {
+    "items": {
+     "description": "A single attachment/upgrade/affixed component.",
+     "items": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number"
+      },
+      {
+       "type": "number"
+      }
+     ],
+     "maxItems": 3,
+     "minItems": 3,
+     "type": "array"
+    },
+    "type": "array"
+   },
+   "alterPendingEffect": {
+    "type": "object"
+   },
+   "alterPersons": {
+    "type": "object"
+   },
+   "assaultDicePool": {
+    "items": {
+     "$ref": "#/definitions/TDiceName"
+    },
+    "type": "array"
+   },
+   "consts": {
+    "$ref": "#/definitions/IEntityConstants"
+   },
+   "def": {
+    "$ref": "#/definitions/IEntityDef"
+   },
+   "defId": {
+    "type": "string"
+   },
+   "dimensions": {
+    "description": "a vector2 consisting of x and y coordinates respectively.",
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 2,
+    "minItems": 2,
+    "type": "array"
+   },
+   "effectIntensity": {
+    "type": "object"
+   },
+   "entityId": {
+    "type": "string"
+   },
+   "evadeDicePool": {
+    "items": {
+     "$ref": "#/definitions/TDiceName"
+    },
+    "type": "array"
+   },
+   "getEffects": {
+    "type": "object"
+   },
+   "getManeuverDifficulty": {
+    "type": "object"
+   },
+   "getPersons": {
+    "type": "object"
+   },
+   "getTrait": {
+    "type": "object"
+   },
+   "gunnerRank": {
+    "type": "number"
+   },
+   "hasArmorAngle": {
+    "type": "object"
+   },
+   "hasEffect": {
+    "type": "object"
+   },
+   "hasEffects": {
+    "type": "object"
+   },
+   "hasTrait": {
+    "type": "object"
+   },
+   "hitArmorAngle": {
+    "type": "object"
+   },
+   "index": {
+    "type": "number"
+   },
+   "intent": {
+    "$ref": "#/definitions/TIntentName"
+   },
+   "isTouchingPoint": {
+    "type": "object"
+   },
+   "layout": {
+    "$ref": "#/definitions/ILayoutBlueprint"
+   },
+   "morph": {
+    "type": "object"
+   },
+   "mutateStats": {
+    "type": "object"
+   },
+   "nextPendingEffect": {
+    "type": "object"
+   },
+   "owner": {
+    "$ref": "#/definitions/TOwnerId"
+   },
+   "popPendingEffects": {
+    "type": "object"
+   },
+   "position": {
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 3,
+    "minItems": 3,
+    "type": "array"
+   },
+   "reduceDamageWithArmor": {
+    "type": "object"
+   },
+   "removePendingEffect": {
+    "type": "object"
+   },
+   "report": {
+    "$ref": "#/definitions/IPreviousMutationReport"
+   },
+   "resolve": {
+    "type": "object"
+   },
+   "rotation": {
+    "description": "a euler angle _(0 - 360)_ representing a facing angle.",
+    "type": "number"
+   },
+   "setDefinition": {
+    "type": "object"
+   },
+   "setIntent": {
+    "type": "object"
+   },
+   "setPosition": {
+    "type": "object"
+   },
+   "setReportEntry": {
+    "type": "object"
+   },
+   "setRotation": {
+    "type": "object"
+   },
+   "size": {
+    "$ref": "#/definitions/TSizeName"
+   },
+   "slot": {
+    "$ref": "#/definitions/TSlotName"
+   },
+   "stats": {
+    "$ref": "#/definitions/IMacroEntityStats"
+   },
+   "tryCollateralBypass": {
+    "type": "object"
+   },
+   "type": {
+    "$ref": "#/definitions/TEntityTypeName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword obstacle\n * Obstacles were stationary, until we decided to make them move.\n * Now they are basically ships without a crew, weapons, or armor.\n * Though, by design, obstacles can still have those things!\n*/\ninterface IObstacleState extends IMacroEntityState {\n  morph: (into: IEffectState) => void\n}"
+ },
+ "IRandomHelper": {
+  "modKeyword": "iRandom",
+  "properties": {
+   "chance": {
+    "description": "percent should be between 0.0 - 1.0",
+    "type": "object"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword iRandom\n * A random number generator class for differing uses.\n * Over time I'll expose the full set of random utilities.\n*/\ninterface IRandomHelper {\n  /** percent should be between 0.0 - 1.0 */\n  chance: (percent: number) => boolean\n}"
+ },
+ "IRuleConditionContext": {
+  "modKeyword": "when",
+  "properties": {
+   "event": {
+    "$ref": "#/definitions/T"
+   },
+   "subject": {
+    "$ref": "#/definitions/IEntityState"
+   },
+   "world": {
+    "$ref": "#/definitions/IWorldState"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword when\n * This is the base context passed into a conditional check.\n * If the mod's condition resolves to `true` ,\n * mod's logic is executed.\n*/\ninterface IRuleConditionContext<T extends IEvent> {\n  event: T\n  subject: IEntityState\n  world: IWorldState\n}"
+ },
+ "ISalvoEvent": {
+  "modKeyword": "salvoEvent",
+  "properties": {
+   "attackAngleMask": {
+    "type": "number"
+   },
+   "attacker": {
+    "$ref": "#/definitions/IMacroEntityState"
+   },
+   "attacks": {
+    "items": {
+     "$ref": "#/definitions/TDiceDigit"
+    },
+    "type": "array"
+   },
+   "collateral": {
+    "items": {
+     "$ref": "#/definitions/IStandardCollateralHit"
+    },
+    "type": "array"
+   },
+   "damageType": {
+    "$ref": "#/definitions/TDamageType"
+   },
+   "defender": {
+    "$ref": "#/definitions/IMacroEntityState"
+   },
+   "distance": {
+    "type": "number"
+   },
+   "entityId": {
+    "type": "string"
+   },
+   "evades": {
+    "items": {
+     "$ref": "#/definitions/TDiceDigit"
+    },
+    "type": "array"
+   },
+   "eventId": {
+    "type": "number"
+   },
+   "hitAngleMask": {
+    "type": "number"
+   },
+   "hitId": {
+    "type": "string"
+   },
+   "isHotshot": {
+    "type": "boolean"
+   },
+   "ordnanceId": {
+    "type": "string"
+   },
+   "touchCount": {
+    "type": "number"
+   },
+   "type": {
+    "$ref": "#/definitions/TEventName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword salvoEvent\n * The standard attack which utilizes dice rolls,\n * range bonuses, and other collateral calculations\n * from the solver to mathematically damage opponents.\n*/\ninterface ISalvoEvent extends IEvent {\n  hitId: string\n  entityId: TEntityId\n  ordnanceId: TDefId\n  attacker: IMacroEntityState\n  attacks: TDiceDigit[]\n  isHotshot: boolean\n  distance: number\n  damageType: TDamageType"
+ },
+ "IShipState": {
+  "modKeyword": "ship",
+  "properties": {
+   "_construct": {
+    "$ref": "#/definitions/IShipConstruct"
+   },
+   "aboard": {
+    "items": {
+     "$ref": "#/definitions/IPersonState"
+    },
+    "type": "array"
+   },
+   "addPendingEffect": {
+    "type": "object"
+   },
+   "addPersons": {
+    "type": "object"
+   },
+   "affix": {
+    "items": {
+     "description": "A single attachment/upgrade/affixed component.",
+     "items": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number"
+      },
+      {
+       "type": "number"
+      }
+     ],
+     "maxItems": 3,
+     "minItems": 3,
+     "type": "array"
+    },
+    "type": "array"
+   },
+   "alterPendingEffect": {
+    "type": "object"
+   },
+   "alterPersons": {
+    "type": "object"
+   },
+   "assaultDicePool": {
+    "items": {
+     "$ref": "#/definitions/TDiceName"
+    },
+    "type": "array"
+   },
+   "captainPressure": {
+    "type": "number"
+   },
+   "consts": {
+    "$ref": "#/definitions/IEntityConstants"
+   },
+   "def": {
+    "$ref": "#/definitions/IEntityDef"
+   },
+   "defId": {
+    "type": "string"
+   },
+   "dimensions": {
+    "description": "a vector2 consisting of x and y coordinates respectively.",
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 2,
+    "minItems": 2,
+    "type": "array"
+   },
+   "effectIntensity": {
+    "type": "object"
+   },
+   "entityId": {
+    "type": "string"
+   },
+   "evadeDicePool": {
+    "items": {
+     "$ref": "#/definitions/TDiceName"
+    },
+    "type": "array"
+   },
+   "getEffects": {
+    "type": "object"
+   },
+   "getManeuverDifficulty": {
+    "type": "object"
+   },
+   "getPersons": {
+    "type": "object"
+   },
+   "getTrait": {
+    "type": "object"
+   },
+   "gunnerRank": {
+    "type": "number"
+   },
+   "hasArmorAngle": {
+    "type": "object"
+   },
+   "hasEffect": {
+    "type": "object"
+   },
+   "hasEffects": {
+    "type": "object"
+   },
+   "hasTrait": {
+    "type": "object"
+   },
+   "hitArmorAngle": {
+    "type": "object"
+   },
+   "index": {
+    "type": "number"
+   },
+   "intent": {
+    "$ref": "#/definitions/TIntentName"
+   },
+   "isTouchingPoint": {
+    "type": "object"
+   },
+   "layout": {
+    "$ref": "#/definitions/ILayoutBlueprint"
+   },
+   "mutateStats": {
+    "type": "object"
+   },
+   "nextPendingEffect": {
+    "type": "object"
+   },
+   "owner": {
+    "$ref": "#/definitions/TOwnerId"
+   },
+   "popPendingEffects": {
+    "type": "object"
+   },
+   "position": {
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 3,
+    "minItems": 3,
+    "type": "array"
+   },
+   "reduceDamageWithArmor": {
+    "type": "object"
+   },
+   "removePendingEffect": {
+    "type": "object"
+   },
+   "report": {
+    "$ref": "#/definitions/IPreviousMutationReport"
+   },
+   "resolve": {
+    "type": "object"
+   },
+   "rotation": {
+    "description": "a euler angle _(0 - 360)_ representing a facing angle.",
+    "type": "number"
+   },
+   "setDefinition": {
+    "type": "object"
+   },
+   "setIntent": {
+    "type": "object"
+   },
+   "setPosition": {
+    "type": "object"
+   },
+   "setReportEntry": {
+    "type": "object"
+   },
+   "setRotation": {
+    "type": "object"
+   },
+   "size": {
+    "$ref": "#/definitions/TSizeName"
+   },
+   "slot": {
+    "$ref": "#/definitions/TSlotName"
+   },
+   "stats": {
+    "$ref": "#/definitions/IMacroEntityStats"
+   },
+   "tryCollateralBypass": {
+    "type": "object"
+   },
+   "type": {
+    "$ref": "#/definitions/TEntityTypeName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword ship\n * The ship was the original base unit of the game.\n * The concepts where divided up and shared with other entity\n * like IObstacleState and even IPersonState.\n * \n * For the most part, we are going to make ships and obstacles almost\n * indistinguishable from one another.\n*/\ninterface IShipState extends IMacroEntityState {\n  _construct: IShipConstruct\n  captainPressure: number\n}"
+ },
+ "ITraits": {
+  "additionalProperties": {
+   "type": "string"
+  },
+  "modKeyword": "traits",
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword traits\n * Flags which may allow access to certain restricted equipment.\n * This is a loose structure which allows modders to define completely new flags.\n * You may see traits defined all over the default game files \n * which can guide how they are typically used.\n*/\ninterface ITraits {\n  [traitName: string]: string\n}"
+ },
+ "IUserInjectedMod": {
+  "modKeyword": "on",
+  "properties": {
+   "after": {
+    "type": "string"
+   },
+   "before": {
+    "type": "string"
+   },
+   "subject": {
+    "type": "string"
+   },
+   "then": {
+    "type": "string"
+   },
+   "when": {
+    "type": "string"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword on\n * Each mod rule can be injected before or after\n * another loaded rule by name.\n * \n * A mod file can contain a list of rules.\n*/\ninterface IUserInjectedMod {\n  after?: TRuleTitle\n  before?: TRuleTitle\n  subject?: TSerializedSubjectQuery\n  when: TSerializedRuleCondition\n  then: TSerializedRuleLogic\n}"
+ },
+ "IWorldState": {
+  "modKeyword": "world",
+  "properties": {
+   "addEvent": {
+    "type": "object"
+   },
+   "decision": {
+    "type": "number"
+   },
+   "entity": {
+    "type": "object"
+   },
+   "entityIds": {
+    "type": "object"
+   },
+   "entityStates": {
+    "$ref": "#/definitions/IEntityStateCollection"
+   },
+   "instantiate": {
+    "type": "object"
+   },
+   "macroEntityEvadeRoll": {
+    "type": "object"
+   },
+   "manager": {
+    "$ref": "#/definitions/IStateManager"
+   },
+   "name": {
+    "type": "string"
+   },
+   "nextEvent": {
+    "type": "object"
+   },
+   "nullifyEffect": {
+    "type": "object"
+   },
+   "random": {
+    "type": "object"
+   },
+   "seed": {
+    "type": "string"
+   },
+   "weather": {
+    "type": "string"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword world\n * in-memory representation of all that exists within a match.\n * @todo\n * need to add arena\n*/\ninterface IWorldState {\n  seed: string\n  name: string\n  manager: IStateManager\n  decision: number\n  entityStates: IEntityStateCollection\n  weather: string\n  random: (seed: string) => number\n  entityIds: (owner?: TOwnerId) => TEntityId[]\n  entity: <T extends IEntityState>(entityId: TEntityId) => T\n  instantiate: <T extends IEntityState>(blueprint: IRuntimeBlueprint) => T\n  addEvent: (event: TEvent) => number\n  nextEvent: (filter?: TEventFilter) => TEvent | null\n  macroEntityEvadeRoll: (entityId: TEntityId, rollCount: number, reason: string) => TDiceDigit[]\n  nullifyEffect: (nullification: IEffectNullification) => IEffectNullifyReport[]\n}"
+ },
+ "TAddEffectFunc": {
+  "modKeyword": "addEffect",
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword addEffect\n * Don't call `entity.addPendingEffect(TEffectName, Partial<IEffectState>)`\n * directly. Instead, just use this function instead to ensure effects are\n * propagated correctly.\n * \n * Automatically includes a lexical/network broadcast of the effect\n * so that both logs and clients can see the effect.\n * \n * The server will still be able to act on nonbroadcasted effects,\n * but the client not expressing every effect will appear to be buglike.\n * \n * Other metadata like the eventId, world.decision, and effect.cause\n * are automatically set as well.\n*/\ntype TAddEffectFunc = (params: IAddEffectParams) => void"
+ },
+ "TAddEventFunc": {
+  "modKeyword": "addEvent",
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword addEvent\n * Alternative to `world.addEvent(new PhaseEvent(number, Partial<IEvent>))`.\n * Automatically includes a sane `eventId` and present `subject.entityId`.\n * \n * Adding an event will lengthen the ruleset resolution time a little.\n * It is possible to create circular events which would break the game.\n * This version of the addEvent will include protection against such\n * circular logic dangers.\n * \n * By default, it is assumed that a mod should not add more than ~10000\n * events per solver phase.\n * @example\n * ```\n * addEvent(EVENT_NAME.MOVE_SHIP, {\n *   entityId: '1042-2',\n *   position: [112.5, 112.5],\n *   rotation: 180,\n *   ...\n * })\n * ```\n*/\ntype TAddEventFunc = (eventName: TEventName, params: Record<string, unknown>) => number"
+ },
+ "TCombatMissEvent": {
+  "anyOf": [
+   {
+    "$ref": "#/definitions/ILaserBeginEvent"
+   },
+   {
+    "$ref": "#/definitions/IFanstackMissEvent"
+   },
+   {
+    "$ref": "#/definitions/IBallisticMissEvent"
+   },
+   {
+    "$ref": "#/definitions/IAoeMissEvent"
+   }
+  ],
+  "modKeyword": "missEvent",
+  "tsdoc": "/**\n * @modKeyword missEvent\n * Typically an implicit behaviour rather than an explicit event from the combat solver.\n * Certain exotic solvers such as fan solver or aoe solver may still perform\n * rule based calculations to determine if a \"hit\" occured.\n * Additionally, the broadcast of an exotic miss is more clear this way\n * so that people aren't like \"i attacked, but nothing happened\" on a miss.\n*/\ntype TCombatMissEvent = ILaserBeginEvent\n  | IFanstackMissEvent\n  | IBallisticMissEvent\n  | IAoeMissEvent"
+ },
+ "TEffectName": {
+  "enum": [
+   "ALMOST",
+   "AMPLIFY",
+   "ANGLE",
+   "ATTACK",
+   "BLOCK",
+   "BOARDED",
+   "BREAK",
+   "BUFF",
+   "CHEM",
+   "COLLATERAL",
+   "COLLIDE",
+   "CRIT",
+   "DEBUFF",
+   "DEPRESSURE",
+   "DISABLE",
+   "DISARM",
+   "DODGE",
+   "ENDURE",
+   "EQUIP",
+   "EVADE",
+   "FIRE",
+   "FIX",
+   "FLEE",
+   "FREEFALL",
+   "FROST",
+   "GRAZE",
+   "GROOVE",
+   "HARM",
+   "HIDE",
+   "HIT",
+   "KO",
+   "MISS",
+   "MISUSE",
+   "MORPH",
+   "MOVE",
+   "NEGATE",
+   "NONE",
+   "PRESSURE",
+   "RAID",
+   "RELOAD",
+   "SABOTAGE",
+   "SHOCK",
+   "SHOOT",
+   "SINK",
+   "SPIN",
+   "STRIKE",
+   "SUMMON",
+   "TUG",
+   "UNEQUIP",
+   "UNLOAD",
+   "USE",
+   "VULN"
+  ],
+  "modKeyword": "EFFECT_NAME",
+  "type": "string",
+  "tsdoc": "/**\n * @modKeyword EFFECT_NAME\n * `EFFECT`s directly alter the game state in various ways\n * influencing victory/defeat conditions.\n * This is where most of the _fun_ in designing the engine occurs.\n * These keys are used to inform the {@link TRuleImplementer}\n * what logic to use for a given circumstance.\n * Note, that these effects here are compiletime constants only.\n * Mod files can introduce new effects at runtime.\n * This set of enums merely aid in building the mod/base version of the game.\n */\ntype TEffectName = 'NEGATE'\n  | 'NONE'\n  | 'SUMMON'\n  | 'MOVE'\n  | 'ANGLE'\n  | 'ATTACK'\n  | 'MISS'\n  | 'GRAZE'\n  | 'BLOCK'\n  | 'HIT'\n  | 'CRIT'\n  | 'BREAK'\n  | 'FIX'\n  | 'FIRE'\n  | 'SHOCK'\n  | 'FROST'\n  | 'CHEM'\n  | 'HARM'\n  | 'SPIN'\n  | 'TUG'\n  | 'DISARM'\n  | 'SINK'\n  | 'FLEE'\n  | 'PRESSURE'\n  | 'DEPRESSURE'\n  | 'COLLIDE'\n  | 'EVADE'\n  | 'UNLOAD'\n  | 'RELOAD'\n  | 'MORPH'\n  | 'HIDE'\n  | 'COLLATERAL'\n  | 'SABOTAGE'\n  | 'BUFF'\n  | 'DEBUFF'\n  | 'EQUIP'\n  | 'UNEQUIP'\n  | 'DISABLE'\n  | 'AMPLIFY'\n  | 'GROOVE'\n  | 'SHOOT'\n  | 'VULN'\n  | 'RAID'\n  | 'BOARDED'\n  | 'FREEFALL'\n  | 'STRIKE'\n  | 'DODGE'\n  | 'USE'\n  | 'MISUSE'\n  | 'ALMOST'\n  | 'ENDURE'\n  | 'KO'"
+ },
+ "TEventName": {
+  "enum": [
+   "aoe",
+   "aoe_miss",
+   "ballistic",
+   "ballistic-miss",
+   "collision",
+   "combat-end",
+   "combat-start",
+   "deploy-end",
+   "deploy-obstacle",
+   "deploy-ship",
+   "deploy-start",
+   "fan-stack",
+   "fan-stack-miss",
+   "laser",
+   "laser-begin",
+   "maneuver-end",
+   "maneuver-start",
+   "move-obstacle",
+   "move-ship",
+   "raid-cost",
+   "raid-falloff",
+   "raid-harm",
+   "raid-invade",
+   "raid-pos",
+   "raid-push",
+   "raid-tinker",
+   "raid-turn-begin",
+   "raid-turn-end",
+   "raid-use",
+   "reposition-end",
+   "reposition-start",
+   "salvo",
+   "spawn-ordnance"
+  ],
+  "modKeyword": "EVENT_NAME",
+  "type": "string",
+  "tsdoc": "/**\n * @modKeyword EVENT_NAME\n * An event spawns a bunch of effects that alter the game state.\n * This is a critical juncture in the headless engine.\n * It encapsulates at the highest level all gameplay features.\n * Before a gameplay feature is added,\n * one must consider which event it belongs to,\n * or if it needs a new event.\n * This is not to be confused with {@link TEffectName}.\n * \n * DEPLOY_BEGIN - Fires once for every entity at the beginning of each match.  \n * DEPLOY_END - Fires once for every entity at the beginning of each match after deploy selections are finalized.  \n * REPOSITION_BEGIN - Fires once for every ship at the beginning of each match when matchmaking is complete.  \n * REPOSITION_END - Fires once for every ship after the matchmaking grace period _(typically 30s)_.  \n * MANEUVER_BEGIN - Fires every turn for every movable entity before the {@link IManeuverProcess} runs.  \n * MANEUVER_END - Fires every turn for every movable entity after the {@link IManeuverProcess} runs.  \n * COMBAT_BEGIN - Fires every turn for every armed entity before the {@link ICombatProcess} runs.  \n * COMBAT_END - Fires every turn for every armed entity after the {@link ICombatProcess} runs.  \n * DEPLOY - Fires anytime an entity is spawned.  \n * MOVE - Fires anytime an entity is moved.  \n * COLLISION - Fires anytime {@link IManeuverProcess} detects a collision.  \n * SALVO - Fires anytime an armed entity assaults something with `standard` attack.  \n * \n * @todo\n * REPOSITION_BEGIN, REPOSITION_END do not appear to be honored by {@link IStateManager} at this time\n */\ntype TEventName = 'deploy-start'\n  | 'deploy-ship'\n  | 'deploy-obstacle'\n  | 'deploy-end'\n  | 'reposition-start'\n  | 'reposition-end'\n  | 'maneuver-start'\n  | 'move-ship'\n  | 'move-obstacle'\n  | 'collision'\n  | 'maneuver-end'\n  | 'combat-start'\n  | 'salvo'\n  | 'fan-stack'\n  | 'fan-stack-miss'\n  | 'laser'\n  | 'laser-begin'\n  | 'ballistic'\n  | 'ballistic-miss'\n  | 'aoe'\n  | 'aoe_miss'\n  | 'spawn-ordnance'\n  | 'combat-end'\n  | 'raid-turn-begin'\n  | 'raid-invade'\n  | 'raid-pos'\n  | 'raid-use'\n  | 'raid-cost'\n  | 'raid-push'\n  | 'raid-harm'\n  | 'raid-tinker'\n  | 'raid-falloff'\n  | 'raid-turn-end'"
+ },
+ "TManeuverDifficulty": {
+  "enum": [
+   "complex",
+   "simple",
+   "standard"
+  ],
+  "modKeyword": "MANEUVER_DIFFICULTY",
+  "type": "string",
+  "tsdoc": "/**\n * @modKeyword MANEUVER_DIFFICULTY\n * When a ship moves, it has effects on those on deck.\n * Pressure can be removed or applied based on how the ship\n * moves.\n*/\ntype TManeuverDifficulty = 'simple' | 'standard' | 'complex'"
+ },
+ "TMissleSizeName": {
+  "enum": [
+   "bulbous",
+   "slender",
+   "wide"
+  ],
+  "modKeyword": "size",
+  "type": "string",
+  "tsdoc": "/**\n * @modKeyword size\n * In meters;\n * slender 0.5, wide 1, bulbous 2\n*/\ntype TMissleSizeName = 'slender' | 'wide' | 'bulbous'"
+ },
+ "TPersonSizeName": {
+  "enum": [
+   "average",
+   "thick",
+   "thin"
+  ],
+  "modKeyword": "size",
+  "type": "string",
+  "tsdoc": "/**\n * @modKeyword size\n * In meters;\n * this 0.15, average 0.22, thick 0.35\n*/\ntype TPersonSizeName = 'thin' | 'average' | 'thick'"
+ },
+ "TRuleCondition": {
+  "modKeyword": "when",
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword when\n * Used to filter out events/effects from a rulset algorithm.\n */\ntype TRuleCondition<T extends IEvent> = (context: IRuleConditionContext<T>) => boolean | IRuleConditionOutput"
+ },
+ "TRuleTitleAfter": {
+  "modKeyword": "after",
+  "type": "string",
+  "tsdoc": "/**\n * @modKeyword after\n * Will cause this rule to take place right after\n * the named rule here.\n*/\ntype TRuleTitleAfter = string"
+ },
+ "TRuleTitleBefore": {
+  "modKeyword": "before",
+  "type": "string",
+  "tsdoc": "/**\n * @modKeyword before\n * Will cause this rule to take place right before\n * the named rule here.\n*/\ntype TRuleTitleBefore = string"
+ },
+ "TShipSizeName": {
+  "enum": [
+   "giant",
+   "large",
+   "massive",
+   "medium",
+   "small",
+   "tiny"
+  ],
+  "modKeyword": "size",
+  "type": "string",
+  "tsdoc": "/**\n * @modKeyword size\n * Default macro entity sizes measure in meters;\n * tiny 5, small 10, medium 15, large 20, giant 25, massive 30\n*/\ntype TShipSizeName = 'tiny' | 'small' | 'medium' | 'large' | 'giant' | 'massive'"
+ },
+ "TSizeName": {
+  "enum": [
+   "average",
+   "bulbous",
+   "giant",
+   "large",
+   "massive",
+   "medium",
+   "slender",
+   "small",
+   "thick",
+   "thin",
+   "tiny",
+   "wide"
+  ],
+  "modKeyword": "size",
+  "type": "string",
+  "tsdoc": "/**\n * @modKeyword size\n * A general word used to encapsulate ship and other volumes, \n * including sizes of people and missles.\n*/\ntype TSizeName = TShipSizeName\n  | TPersonSizeName\n  | TMissleSizeName"
+ },
+ "TSlotName": {
+  "enum": [
+   "armor",
+   "auxOrdnance",
+   "captain",
+   "crew",
+   "engine",
+   "gyro",
+   "merit",
+   "obstacle",
+   "ordnance",
+   "ship",
+   "talent",
+   "technology"
+  ],
+  "modKeyword": "slot",
+  "type": "string",
+  "tsdoc": "/**\n * @modKeyword slot\n * Refers to the customization slots available on a `IMacroEntity`, person.\n * \n * @remarks\n * DEBT: This term has become overloaded in the definitions\n * since we now use `mods/definitions/.../file.slot` to isolate types of {@link IModFile}\n*/\ntype TSlotName = 'ship' \n  | 'captain'\n  | 'crew'\n  | 'armor'\n  | 'gyro'\n  | 'engine'\n  | 'ordnance'\n  | 'auxOrdnance'\n  | 'merit'\n  | 'talent'\n  | 'technology'\n  | 'obstacle'"
+ },
+ "TSpeed": {
+  "enum": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "modKeyword": "SPEED",
+  "type": "number",
+  "tsdoc": "/**\n * @modKeyword SPEED\n * Controls how far something moves each simulation frame.\n * These aren't exactly units, \n * but are relatively representative of slower to faster.\n*/\ntype TSpeed = 1 | 2 | 3 | 4 | 5"
+ },
+ "TTapEvent": {
+  "anyOf": [
+   {
+    "$ref": "#/definitions/IDeployTapEvent"
+   },
+   {
+    "$ref": "#/definitions/IRepositionTapEvent"
+   },
+   {
+    "$ref": "#/definitions/IManeuverTapEvent"
+   },
+   {
+    "$ref": "#/definitions/ICombatTapEvent"
+   },
+   {
+    "$ref": "#/definitions/IRaidTapEvent"
+   }
+  ],
+  "modKeyword": "tapEvent",
+  "tsdoc": "/**\n * @modKeyword tapEvent\n * Tap events are ideal for triggering effects at the beginning/end of turns.\n * Presently isn't any different from the regular `IEvent`.\n * The tap events are reserved for future possible extra fields.\n */\ntype TTapEvent = IDeployTapEvent | IRepositionTapEvent | IManeuverTapEvent | ICombatTapEvent | IRaidTapEvent"
+ },
+ "KEYWORDS": {
+  "requires": "this component may only be attached to a pinion that has specified traits",
+  "move": "a unit's position change",
+  "simple": "a move that reduces pressure",
+  "complex": "a move that increases pressure",
+  "standard": "a move that has no additional side effects",
+  "slowest": "first speed out of five",
+  "slow": "second speed out of five",
+  "steady": "third speed out of five",
+  "fast": "fourth speed out of five",
+  "fastest": "fifth speed out of five",
+  "hit": "a possible hurt or devastate",
+  "hurt": "unit will take 1 damage",
+  "evade": "avoid one hit or devestate",
+  "graze": "when an attacker barely misses a defender",
+  "grazed": "this unit is barely missed by an attacker",
+  "devestate": "apply a havoc effect to a defender",
+  "devestated": "a havoc effect is applied to this unit",
+  "havoc": "usually bad undesirable effects",
+  "pressure": "alters person mental state which may affect performance",
+  "create": "spawn a specified entity",
+  "neutralize": "reverse an intensity point by one in the opposite direction",
+  "affordable": "restores some fleet cost"
+ }
+}
