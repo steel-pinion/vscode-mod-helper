@@ -1,0 +1,5 @@
+node_modules/
+.vsce
+*.env
+*.vsix
+.DS_Store

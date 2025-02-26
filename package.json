@@ -1,0 +1,63 @@
+{
+	"name": "steelpinion-vscode-mod-helper",
+	"displayName": "Steelpinion Yaml Mod Helper",
+	"description": "typescript syntax and keyword tooltips within Steelpinion mod files",
+	"version": "2.0.0",
+	"engines": {
+		"vscode": "^1.96.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Snippets",
+		"Other"
+	],
+	"main": "./src/extension.js",
+	"activationEvents": [
+		"onLanguage:yaml"
+	],
+	"contributes": {
+		"grammars": [
+			{
+				"path": "./syntaxes/injection.json",
+				"scopeName": "steel.injection",
+				"injectTo": [
+					"source.yaml"
+				],
+				"embeddedLanguages": {
+					"source.ts": "typescript",
+					"source.typescript": "typescript",
+					"meta.embedded.block.typescript": "typescript"
+				}
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm prune --omit=dev",
+		"prepare": "npx vsce package",
+		"publish": "npx vsce publish"
+	},
+	"devDependencies": {
+		"@vscode/vsce": "^3.2.2"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/steel-pinion/vscode-mod-helper"
+	},
+	"keywords": [
+		"vscode",
+		"yaml",
+		"yml",
+		"steel",
+		"pinion",
+		"steelpinion",
+		"mods"
+	],
+	"author": "Shon Diaz <lets.chat.shon@gmail.com> & Rare Gentlemen",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/steel-pinion/vscode-mod-helper/issues"
+	},
+	"homepage": "https://steelpinion.com/",
+	"publisher": "RareGentlemen",
+	"icon": "img/leon-mod.png"
+}
