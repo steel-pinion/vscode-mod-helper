@@ -6,7 +6,7 @@
   ],
   "repository": {
     "typescript-logic-block-literal": {
-      "begin": "(then|when)(:) (\\|\\n|)",
+      "begin": "(then|when|subject)(:) (\\|\\n|)",
       "end": ";\\n",
       "beginCaptures": {
         "1": {

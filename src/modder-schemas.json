@@ -497,7 +497,7 @@
    }
   },
   "type": "object",
-  "tsdoc": "/**\n * @modKeyword subject\n * Base class for all game objects with state tracking needs.\n * It was imagined that there would be\n * ships, projectiles, obstacles, and people that need be managed.\n * Ideally all of those entities would have reactions\n * to the same effects, even if they reacted differently.\n * This base entity is meant to encapsulate\n * the most common functionality shared between all entities.\n */\ninterface IEntityState {\n  def: IEntityDef\n  defId: TDefId\n  entityId: TEntityId\n  type: TEntityTypeName\n  slot: TSlotName\n  index: number\n  owner: TOwnerId\n  size: TSizeName\n  dimensions: TVector2\n  intent: TIntentName\n  position: TVector3\n  rotation: TEulerRotation\n  stats: IBaseStats\n  affix: TAffix[]\n  report: IPreviousMutationReport\n  consts: IEntityConstants\n  isTouchingPoint: (point: TVector2) => boolean\n  hasTrait: (trait: TTraitName, specificValue?: string) => boolean\n  getTrait: (trait: TTraitName) => string\n  hasEffect: (effectName: TEffectName, truthyPropertyName?: string) => boolean\n  hasEffects: (effect: TEffectName, filterBy: TEffectFilter) => boolean\n  getEffects: (effectName: TEffectName, filterBy?: TEffectFilter, limit?: number) => IEffectState[]\n  setDefinition: (def: IEntityDef) => void\n  setIntent: (intent?: TIntentName) => void\n  setPosition: (newPos: TVector3) => void\n  setRotation: (newRot: TEulerRotation) => void\n  setReportEntry: <T>(name: string, value: T) => void\n  mutateStats: <T>(statName: TNumericStatName, modifyBy: number) => T\n  addPendingEffect: (effectName: TEffectName, effectSettings) => number\n  nextPendingEffect: (effectName, removalCheck: TEffectFilter) => IEffectState | undefined\n  popPendingEffects: (effectName: TEffectName, filterBy?: TEffectFilter, limit?: number) => IEffectState[]\n  removePendingEffect: (effectName: TEffectName, filter: TEffectFilter, limit?: number) => number\n  alterPendingEffect: (effectName: TEffectName, mapFunc: TEffectStateAlteration, filter?: TEffectFilter, limit?: number) => number\n  effectIntensity: (effectName: TEffectName, filterBy?: TEffectFilter) => number\n  resolve: <T>() => T\n}"
+  "tsdoc": "/**\n * @modKeyword subject\n * Base class for all game objects with state tracking needs.\n * It was imagined that there would be\n * ships, projectiles, obstacles, and people that need be managed.\n * Ideally all of those entities would have reactions\n * to the same effects, even if they reacted differently.\n * This base entity is meant to encapsulate\n * the most common functionality shared between all entities.\n */\ninterface IEntityState {\n  def: IEntityDef\n  defId: TDefId\n  entityId: TEntityId\n  type: TEntityTypeName\n  slot: TSlotName\n  index: number\n  owner: TOwnerId\n  size: TSizeName\n  dimensions: TVector2\n  intent: TIntentName\n  position: TVector3\n  rotation: TEulerRotation\n  stats: IBaseStats\n  affix: TAffix[]\n  report: IPreviousMutationReport\n  consts: IEntityConstants\n  isTouchingPoint: (point: TVector2) => boolean\n  hasTrait: (trait: TTraitName, specificValue?: string) => boolean\n  getTrait: (trait: TTraitName) => string\n  hasEffect: (effectName: TEffectName, truthyPropertyName?: string) => boolean\n  hasEffects: (effect: TEffectName, filterBy: TEffectFilter) => boolean\n  getEffects: (effectName: TEffectName, filterBy?: TEffectFilter, limit?: number) => IEffectState[]\n  setDefinition: (def: IEntityDef) => void\n  setIntent: (intent?: TIntentName) => void\n  setPosition: (newPos: TVector3) => void\n  setRotation: (newRot: TEulerRotation) => void\n  setReportEntry: <T>(name: string, value: T) => void\n  mutateStats: <T>(statName: TNumericStatName, modifyBy: number) => T\n  addPendingEffect: (effectName: TEffectName, effectSettings) => number\n  nextPendingEffect: (effectName, removalCheck: TEffectFilter) => IEffectState | undefined\n  popPendingEffects: (effectName: TEffectName, filterBy?: TEffectFilter, limit?: number) => IEffectState[]\n  removePendingEffect: (effectName: TEffectName, filter: TEffectFilter, limit?: number) => IEffectState[]\n  alterPendingEffect: (effectName: TEffectName, mapFunc: TEffectStateAlteration, filter?: TEffectFilter, limit?: number) => number\n  effectIntensity: (effectName: TEffectName, filterBy?: TEffectFilter) => number\n  resolve: <T>() => T\n}"
  },
  "IEvent": {
   "additionalProperties": {},
@@ -1236,16 +1236,197 @@
   "type": "object",
   "tsdoc": "/**\n * @modKeyword obstacle\n * Obstacles were stationary, until we decided to make them move.\n * Now they are basically ships without a crew, weapons, or armor.\n * Though, by design, obstacles can still have those things!\n*/\ninterface IObstacleState extends IMacroEntityState {\n  morph: (into: IEffectState) => void\n}"
  },
+ "IPersonState": {
+  "modKeyword": "person",
+  "properties": {
+   "addPendingEffect": {
+    "type": "object"
+   },
+   "affix": {
+    "items": {
+     "description": "A single attachment/upgrade/affixed component.",
+     "items": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "number"
+      },
+      {
+       "type": "number"
+      }
+     ],
+     "maxItems": 3,
+     "minItems": 3,
+     "type": "array"
+    },
+    "type": "array"
+   },
+   "alterPendingEffect": {
+    "type": "object"
+   },
+   "consts": {
+    "$ref": "#/definitions/IEntityConstants"
+   },
+   "def": {
+    "$ref": "#/definitions/IPersonDef"
+   },
+   "defId": {
+    "type": "string"
+   },
+   "dimensions": {
+    "description": "a vector2 consisting of x and y coordinates respectively.",
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 2,
+    "minItems": 2,
+    "type": "array"
+   },
+   "effectIntensity": {
+    "type": "object"
+   },
+   "entityId": {
+    "type": "string"
+   },
+   "getEffects": {
+    "type": "object"
+   },
+   "getTrait": {
+    "type": "object"
+   },
+   "hasEffect": {
+    "type": "object"
+   },
+   "hasEffects": {
+    "type": "object"
+   },
+   "hasTrait": {
+    "type": "object"
+   },
+   "index": {
+    "type": "number"
+   },
+   "intent": {
+    "$ref": "#/definitions/TIntentName"
+   },
+   "isTouchingPoint": {
+    "type": "object"
+   },
+   "mutateStats": {
+    "type": "object"
+   },
+   "nextPendingEffect": {
+    "type": "object"
+   },
+   "orders": {
+    "items": {
+     "$ref": "#/definitions/IPersonalCombatCommand"
+    },
+    "type": "array"
+   },
+   "owner": {
+    "$ref": "#/definitions/TOwnerId"
+   },
+   "pilotAssaultDice": {
+    "items": {
+     "$ref": "#/definitions/TDiceName"
+    },
+    "type": "array"
+   },
+   "pilotEvadeDice": {
+    "items": {
+     "$ref": "#/definitions/TDiceName"
+    },
+    "type": "array"
+   },
+   "popPendingEffects": {
+    "type": "object"
+   },
+   "position": {
+    "items": [
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     },
+     {
+      "type": "number"
+     }
+    ],
+    "maxItems": 3,
+    "minItems": 3,
+    "type": "array"
+   },
+   "removePendingEffect": {
+    "type": "object"
+   },
+   "report": {
+    "$ref": "#/definitions/IPreviousMutationReport"
+   },
+   "resolve": {
+    "type": "object"
+   },
+   "rotation": {
+    "description": "a euler angle _(0 - 360)_ representing a facing angle.",
+    "type": "number"
+   },
+   "setAboard": {
+    "type": "object"
+   },
+   "setDefinition": {
+    "type": "object"
+   },
+   "setIntent": {
+    "type": "object"
+   },
+   "setOrders": {
+    "type": "object"
+   },
+   "setPosition": {
+    "type": "object"
+   },
+   "setReportEntry": {
+    "type": "object"
+   },
+   "setRotation": {
+    "type": "object"
+   },
+   "size": {
+    "$ref": "#/definitions/TSizeName"
+   },
+   "slot": {
+    "$ref": "#/definitions/TSlotName"
+   },
+   "stats": {
+    "$ref": "#/definitions/IPersonalStats"
+   },
+   "type": {
+    "$ref": "#/definitions/TEntityTypeName"
+   }
+  },
+  "type": "object",
+  "tsdoc": "/**\n * @modKeyword person\n * in-memory representation of a person, typically aboard a ship\n*/\ninterface IPersonState extends IEntityState {\n  def: IPersonDef\n  stats: IPersonalStats\n  owner: TOwnerId\n  orders: IPersonalCombatCommand[]\n  pilotEvadeDice: TDiceName[]\n  pilotAssaultDice: TDiceName[]"
+ },
  "IRandomHelper": {
   "modKeyword": "iRandom",
   "properties": {
    "chance": {
     "description": "percent should be between 0.0 - 1.0",
     "type": "object"
+   },
+   "pluck": {
+    "type": "object"
    }
   },
   "type": "object",
-  "tsdoc": "/**\n * @modKeyword iRandom\n * A random number generator class for differing uses.\n * Over time I'll expose the full set of random utilities.\n*/\ninterface IRandomHelper {\n  /** percent should be between 0.0 - 1.0 */\n  chance: (percent: number) => boolean\n}"
+  "tsdoc": "/**\n * @modKeyword iRandom\n * A random number generator class for differing uses.\n * Over time I'll expose the full set of random utilities.\n*/\ninterface IRandomHelper {\n  /** percent should be between 0.0 - 1.0 */\n  chance: (percent: number) => boolean\n  pluck: <T>(list: T[]) => T\n}"
  },
  "IRuleConditionContext": {
   "modKeyword": "when",
@@ -1642,6 +1823,17 @@
   "modKeyword": "missEvent",
   "tsdoc": "/**\n * @modKeyword missEvent\n * Typically an implicit behaviour rather than an explicit event from the combat solver.\n * Certain exotic solvers such as fan solver or aoe solver may still perform\n * rule based calculations to determine if a \"hit\" occured.\n * Additionally, the broadcast of an exotic miss is more clear this way\n * so that people aren't like \"i attacked, but nothing happened\" on a miss.\n*/\ntype TCombatMissEvent = ILaserBeginEvent\n  | IFanstackMissEvent\n  | IBallisticMissEvent\n  | IAoeMissEvent"
  },
+ "TDirectionName": {
+  "enum": [
+   "backward",
+   "forward",
+   "left",
+   "right"
+  ],
+  "modKeyword": "moveDirection",
+  "type": "string",
+  "tsdoc": "/**\n * @modKeyword moveDirection\n * Relative change of direction from the perspective of the moving ship.\n*/\ntype TDirectionName = 'forward' | 'right' | 'backward' | 'left'"
+ },
  "TEffectName": {
   "enum": [
    "ALMOST",
@@ -1881,6 +2073,11 @@
   "steady": "third speed out of five",
   "fast": "fourth speed out of five",
   "fastest": "fifth speed out of five",
+  "collision": "when two things try to fill the same space",
+  "bank": "a subtle direction change of about 45 degrees",
+  "turn": "a 90 degree change of direction",
+  "near": "when something is within 25 meters",
+  "far": "when something is beyond 50 meters",
   "hit": "a possible hurt or devastate",
   "hurt": "unit will take 1 damage",
   "evade": "avoid one hit or devestate",
@@ -1889,9 +2086,30 @@
   "devestate": "apply a havoc effect to a defender",
   "devestated": "a havoc effect is applied to this unit",
   "havoc": "usually bad undesirable effects",
+  "brittle": "getting hit adds stack(s) of EFFECT.HIT",
+  "grit": "getting hit subtracts stack(s) of EFFECT.HIT",
+  "accurate": "ability to aim past allies and reduce random miss arcs",
+  "fire": "stack(s) of EFFECT.FIRE",
+  "overheat": "getting burned adds stack(s) of EFFECT.FIRE",
+  "fireproof": "getting burned subtracts stack(s) of EFFECT.FIRE",
+  "frost": "stack(s) of EFFECT.FROST",
+  "overchill": "getting chilled adds stack(s) of EFFECT.FROST",
+  "frostproof": "getting chilled subtracts stack(s) of EFFECT.FROST",
+  "shock": "stack(s) of EFFECT.SHOCK",
+  "overstatic": "getting shocked adds stack(s) of EFFECT.SHOCK",
+  "shockproof": "getting shocked subtracts stack(s) of EFFECT.SHOCK",
+  "chem": "stack(s) of EFFECT.CHEM",
+  "overdose": "getting acidic adds stack(s) of EFFECT.CHEM",
+  "chemproof": "getting acidic subtracts stack(s) of EFFECT.CHEM",
+  "transmute": "converts elemental stack(s) into a different element",
   "pressure": "alters person mental state which may affect performance",
+  "comfortable": "getting depressure adds stack(s) of EFFECT.DEPRESSURE",
+  "uncomfortable": "getting pressure adds stack(s) of EFFECT.PRESSURE",
+  "bliss": "does not suffer long term psychological trauma",
   "create": "spawn a specified entity",
   "neutralize": "reverse an intensity point by one in the opposite direction",
-  "affordable": "restores some fleet cost"
+  "nullify": "completely remove one or more effect(s)",
+  "affordable": "restores some fleet cost",
+  "respec": "redefines base stats (usually power, speed, and/or hull)"
  }
 }

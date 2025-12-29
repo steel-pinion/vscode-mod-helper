@@ -11,9 +11,6 @@ let keywordHover = {
   defId: {
     tip: 'Known as "definition id", identified as just "id" on each mod file.'
   },
-  release: {
-    tip: 'Engine version at time when this file was added. Has no functional effect beyond tracking.'
-  },
   cost: {
     tip: 'How many points are taken from a Fleet Budget.'
   },
@@ -41,7 +38,7 @@ let keywordHover = {
   massive: {
     tip: '30x30 meters'
   },
-  system: {
+  motor: {
     tip: 'Refers to the type of fuel an engine uses like combustion or solar'
   },
   armor: {
